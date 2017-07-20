@@ -7,8 +7,14 @@ export default Ember.Controller.extend({
   isDisabled: Ember.computed.not('isValid'),
   actions: {
     sendMessage() {
-      alert(`Sending following message from ${this.get('emailAddress')}: "${this.get('textMessage')}"`);
-      this.set('responseMessage', "We got your message and we'll get in touch soon");
+      const email = this.get('emailAddress');
+      const messageText = this.get('textMessage');
+      const newMessage = this.store.createRecord('contact', { email, message: messageText});
+      newMessage.save().then((response) => {
+        this.set('emailAddress', '');
+        this.set('textMessage', '');
+        alert(`Message saved with id: ${response.get('id')}`);
+      });
     }
   }
 });
